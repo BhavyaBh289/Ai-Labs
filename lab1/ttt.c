@@ -1,0 +1,85 @@
+#include<stdio.h>
+
+// int board[3][3] = {{1,1,1}, {1, 1,1}, {1,1,1} };
+int board[3][3]= {{0,0,0},{0,0,0},{0,0,0}};
+void printboard(){
+    // global board
+    // printf("%d",board[0][0]);
+    for (int i=0;i<3;i++){
+        for(int j=0;j<3;j++){
+            int k = board[i][j];
+            // printf("%d",k);
+            if (k==0)
+                printf("  ");
+            if (k ==1)
+                printf("X ");
+            if (k == 2)
+                printf("O ");
+        }
+        printf("\n");
+    }
+}
+void main(){
+    // board[0] = [0,0,0];
+    printboard();
+}
+void getinputx(){
+    // global board
+    int n[2];
+    printf("player X play ");
+    // n = [int(s) for s in input("").split()]
+    scanf("%d %d",&n[0],&n[2]);
+    if((n[0]>0&&n[0]<4)&&(n[1]>0&&n[1]<1)){
+        if (board[n[0]-1][n[1]-1]==0){
+            board[n[0]-1][n[1]-1] = 1;
+            printboard();
+                return;
+        }
+    }
+    printf("invalid input ");
+    getinputx();
+    return;
+}
+void getinputo(){
+    // global board
+    int n[2];
+    printf("player O play ");
+    // n = [int(s) for s in input("").split()]
+    scanf("%d %d",&n[0],&n[2]);
+    if((n[0]>0&&n[0]<4)&&(n[1]>0&&n[1]<1)){
+        if (board[n[0]-1][n[1]-1]==0){
+            board[n[0]-1][n[1]-1] = 2;
+            printboard();
+                return;
+        }
+    }
+    printf("invalid input ");
+    getinputo();
+    return;
+}
+int checkgame(){
+    // global board
+    // for i in board:
+    for (int i=0;i<3;i++){
+        if (board[i][0]==board[i][1]&& board[i][1]==board[i][2]&& board[i][0]!=0){
+            printf("player %d wins  the game ",board[i][0]);
+            return 1;
+        }
+    }
+    for (int i=0;i<3;i++){
+        if (board[0][i]==board[1][i]&& board[1][i]==board[2][i] &&board[2][i]!=0){
+            printf("player %d wins  the game ",board[0][i]);
+            return 1;
+        }
+    }
+    if (board[0][0]== board[1][1]&&board[1][1]== board[2][2]&& board[1][1]!=0){
+        printf("player %d wins  the game ",board[1][1]);
+        return 1;
+    }
+    if (board[2][0]== board[1][1]&&board[1][1]== board[0][2]&& board[1][1]!=0){
+        printf("player %d wins  the game ",board[1][1]);
+        return 1;
+
+    }
+    return 0;
+}
