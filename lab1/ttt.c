@@ -2,7 +2,7 @@
 
 // int board[3][3] = {{1,1,1}, {1, 1,1}, {1,1,1} };
 int board[3][3]= {{0,0,0},{0,0,0},{0,0,0}};
-void printboard(){
+void printboard(){  // working
     // global board
     // printf("%d",board[0][0]);
     for (int i=0;i<3;i++){
@@ -20,19 +20,43 @@ void printboard(){
     }
 }
 void main(){
-    // board[0] = [0,0,0];
     printboard();
+    int chance = 0;
+    int n = 0;
+    while (n!=1){
+        printf("%d ",chance);
+        if (chance ==0){
+            getinputx();
+            printboard();
+            n = checkgame();
+            // printf("1");
+            chance = 1;
+        }else if (chance == 1){
+            getinputo();
+            printboard();
+            chance = 0;
+            n = checkgame();
+        }
+    }
+    // board[0] = [0,0,0];
+    // printboard();
 }
 void getinputx(){
     // global board
     int n[2];
     printf("player X play ");
     // n = [int(s) for s in input("").split()]
-    scanf("%d %d",&n[0],&n[2]);
-    if((n[0]>0&&n[0]<4)&&(n[1]>0&&n[1]<1)){
+    scanf("%d",&n[0]);
+    scanf("%d",&n[1]);
+// scanf("%d %d",&n[0],&n[1]);
+    // printf("%d %d",n[0],n[1]);
+    if((n[0]>0&&n[0]<4)&&(n[1]>0&&n[1]<4)){
+        // printf("1");
         if (board[n[0]-1][n[1]-1]==0){
+            // printf("2");
+
             board[n[0]-1][n[1]-1] = 1;
-            printboard();
+            // printboard();
                 return;
         }
     }
@@ -45,11 +69,13 @@ void getinputo(){
     int n[2];
     printf("player O play ");
     // n = [int(s) for s in input("").split()]
-    scanf("%d %d",&n[0],&n[2]);
-    if((n[0]>0&&n[0]<4)&&(n[1]>0&&n[1]<1)){
+    scanf("%d",&n[0]);
+    scanf("%d",&n[1]);
+
+    if((n[0]>0&&n[0]<4)&&(n[1]>0&&n[1]<4)){
         if (board[n[0]-1][n[1]-1]==0){
             board[n[0]-1][n[1]-1] = 2;
-            printboard();
+            // printboard();
                 return;
         }
     }
