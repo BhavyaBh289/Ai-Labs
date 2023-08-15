@@ -132,7 +132,25 @@ int pop (struct stack* stack, int n){
   return data;
 }
 
-
+void bfs(struct Graph* graph){
+  struct Queue * queue = createQueue();
+  int visited[graph->vertNum] ;
+  enqueue(queue,0);
+  visited[0]=1;
+  while(queue->front){
+    int n = dequeue(queue);
+    printf("%d ",n);
+    struct node * visiting = graph->adjLists[n];
+    while (visiting){
+      int adj =visiting->data;
+      if(visited[adj]!=1){
+        enqueue(queue,adj);
+        visited[adj]=1;
+      }
+      visiting = visiting -> next;
+    }
+  }
+}
 
 int main() {
     // int n,m,x,y;
@@ -149,7 +167,10 @@ int main() {
     //     addEdge(graph,x,y);
     // }
     struct Graph* graph = creategraph();
-    printGraph(graph);
+    // printGraph(graph);
+    printf("Bfs is : ");
+    bfs(graph);
+    printf("\n");
     return 0;
 }
 
