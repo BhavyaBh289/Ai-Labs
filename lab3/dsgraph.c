@@ -123,7 +123,7 @@ void push (struct stack* stack, int n){
   newNode->data = n;
   stack->head = newNode;
 }
-int pop (struct stack* stack, int n){
+int pop (struct stack* stack){
   if (stack->head == NULL) {
         return -1; // Empty
     }
@@ -151,7 +151,27 @@ void bfs(struct Graph* graph){
     }
   }
 }
+void dfs(struct Graph* graph){
+  struct stack * stk = createstack();
+  int visited[graph->vertNum] ;
 
+  push(stk,0);
+  visited[0]=1;
+
+  while(stk->head){
+    int n = pop(stk);
+    printf("%d ",n);
+    struct node * visiting = graph->adjLists[n];
+    while (visiting){
+      int adj =visiting->data;
+      if(visited[adj]!=1){
+        push(stk,adj);
+        visited[adj]=1;
+      }
+      visiting = visiting -> next;
+    }
+  }
+}
 int main() {
     // int n,m,x,y;
     // printf("enter the number of matrices");
@@ -170,6 +190,9 @@ int main() {
     // printGraph(graph);
     printf("Bfs is : ");
     bfs(graph);
+    printf("\n");
+    printf("Dfs is : ");
+    dfs(graph);
     printf("\n");
     return 0;
 }
