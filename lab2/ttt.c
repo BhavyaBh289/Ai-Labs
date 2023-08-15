@@ -48,10 +48,9 @@ int printgame(int n){
         printf("player wins  the game \n");
     else if(n==-1){
         printf("computer wins the game\n");
+    }else if(n==2){
+        printf("Game Tied\n");
     }
-    // else if(n==2){
-    //     printf("Game tied\n");
-    // }
     return n;
 }
 int checkgame(){
@@ -81,67 +80,78 @@ int checkgame(){
     return 2 ;
 }
 
-
-int minimax(int player) {
-    int t= checkgame();
-    if (t%2!=0){
-        printf("%d \n",t);
-        return t * player;
+int minimax( int isMinimizing) {
+    int score = checkgame();
+    //AI wins
+    if (score == -1) {
+        return score;
     }
-    int move = -1;
-    int score = -2;
-    int i;
-    int n[2];
-
-    for(i = 0; i < 9; i++) {
-        n[0]=i;
-        n[1]=n[0]%3;
-        n[0]=n[0]/3;
-        if(board[n[0]][n[1]] == 0) {
-            board[n[0]][n[1]] = player;
-            int thisScore = -minimax(player * -1);
-            if(thisScore > score) {
-                score = thisScore;
-                move = i;
-            }
-            n[0]=i;
-            n[1]=n[0]%3;
-            n[0]=n[0]/3;
-            board[n[0]][n[1]] = 0;
-            // printf("%d\n",score);
-        }
+    //human wins
+    if (score == 1) {
+        return score;
     }
-    if(move == -1)
+    // it's a tie
+    if (score == 2) {
         return 0;
-    return score;
+    }
+
+    // If it's the AI's turn it is minimizing score
+    if (isMinimizing) {
+        int bestScore = 10;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == 0) {
+                    board[i][j] = -1;
+                    int score = minimax(0);
+                    board[i][j] = 0;
+                    if (score < bestScore) {
+                        bestScore = score;
+                    }
+                }
+            }
+        }
+        return bestScore;
+    } else {                    ///player is maximizing score
+        int bestScore = -10;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == 0) {
+                    board[i][j] = 1;
+                    int score = minimax( 1);
+                    board[i][j] = 0;
+                    if (score > bestScore) {
+                        bestScore = score;
+                    }
+                }
+            }
+        }
+        return bestScore;
+    }
 }
 
 void computerMove() {
-    int move = -1;
-    int score = -2;
-    int i;
-    int n[2];
+    int bestScore = 10;
+    int bestMoveX = -1;
+    int bestMoveY = -1;
 
-    for(i = 0; i < 9; ++i) {
-        n[0]=i;
-        n[1]=n[0]%3;
-        n[0]=n[0]/3;
-        if(board[n[0]][n[1]] == 0) {
-            board[n[0]][n[1]] = 1;
-            int tempScore = -minimax(-1);
-            // printf("%d\n",tempScore);
-            board[n[0]][n[1]] = 0;
-            if(tempScore > score) {
-                score = tempScore;
-                move = i;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == 0) {
+                board[i][j] = -1;
+                int score = minimax(0);
+                board[i][j] = 0;
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestMoveX = i;
+                    bestMoveY = j;
+                }
             }
         }
     }
-    n[0]=move;
-    n[1]=n[0]%3;
-    n[0]=n[0]/3;
-    board[n[0]][n[1]] = -1;
+    printf("computer plays: %d\n", (3*bestMoveX)+bestMoveY+1);
+    board[bestMoveX][bestMoveY] = -1;
 }
+
 int main(){
     initial();
     int chance = 0;
@@ -149,7 +159,7 @@ int main(){
     while (n==0){
         if (chance ==0){
             getinputplayer();
-            // printboard();
+            printboard();
             n = checkgame();
             chance = 1;
         }else if (chance == 1){
@@ -159,8 +169,7 @@ int main(){
             n = checkgame();
         }
     }
-    printboard();
     printgame(n);
-    printf("\nHope You liked the game");
+    printf("Hope You liked the game");
     return 0;
 }

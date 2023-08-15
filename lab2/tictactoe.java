@@ -1,163 +1,190 @@
- 
-import java.util.Scanner;
-public class tictactoe {
-        public static void main(String[] args) {
-        System.out.println("Let's begin the Tic Tac Toe game");
-        char[][] board = new char[3][3];
-        for(int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                board[row][col] = ' ';
-            }
-        }
-        char player = 'X';
-        boolean Over = false;
-        Scanner sc = new Scanner(System.in);
-        while (!Over) {
-            printBoard(board);
-            if (player == 'X') {
-                System.out.println("Player " + player + " enter: ");
-                int row = sc.nextInt();
-                int col = sc.nextInt();
-                if (board[row][col] == ' ') {
-                    board[row][col] = player;
-                    Over = isGameOver(board, player);
-                    if (Over) {
-                        System.out.println("Player " + player + " won");
-                        printBoard(board);
-                    } else {
-                        player = 'O';
-                    }
-                } else {
-                    System.out.println("Box not empty...try again");
-                }
-            } else{
-                System.out.println("AI Player " + player + "is making a move");
-                makeAIMove(board, player);
-                Over = isGameOver(board, player);
-                if (Over) {
-                    System.out.println("AI Player " + player + " won");
-                    printBoard(board);
-                } else {
-                    player = 'X';
-                }
-            }
-        }
-    }
-    public static boolean isGameOver(char[][] board, char player) {
-        if (hasPlayerWon(board, player)) {
-            return true;
-        } else if (hasPlayerWon(board, (player == 'X') ? 'O' : 'X')) {
-            return true;
-        }
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                if (board[row][col] == ' ') {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    public static boolean hasPlayerWon(char[][] board, char player) {
-        for (int row = 0; row < board.length; row++) {
-            if (board[row][0] == player && board[row][1] == player && board[row][2] == player) {
-                return true;
-            }
-        }
-        for (int col = 0; col < board.length; col++) {
-            if (board[0][col] == player && board[1][col] == player && board[2][col] == player) {
-                return true;
-            }
-        }
-        if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
-            return true;
-        }
-        if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
-            return true;
-        }
 
-        return false;
-    }
-    public static void printBoard(char[][] board) {
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                System.out.print(board[row][col] + " | ");
-            }
-            System.out.println();
-        }
-    }
+class GFG{
+	static class Move{
+		int row, col;
+	};
 
+	static char player = 'x', opponent = 'o';
 
-    public static void makeAIMove(char[][] board, char player) {
-        int[] bestMove = miniMax(board, player);
-        board[bestMove[0]][bestMove[1]] = player;
-    }
+	// This function returns true if there are moves
+	// remaining on the board. It returns false if
+	// there are no moves left to play.
+	static Boolean isMovesLeft(char board[][])
+	{
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				if (board[i][j] == '_')
+					return true;
+		return false;
+	}
 
-    public static int[] miniMax(char[][] board, char player) {
-        int[] bestMove = new int[]{-1, -1};
-        double bestScore = (player == 'X') ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+	// This is the evaluation function as discussed
+	// in the previous article ( http://goo.gl/sJgv68 )
+	static int evaluate(char b[][])
+	{
+		// Checking for Rows for X or O victory.
+		for (int row = 0; row < 3; row++)
+		{
+			if (b[row][0] == b[row][1] &&
+				b[row][1] == b[row][2])
+			{
+				if (b[row][0] == player)
+					return +10;
+				else if (b[row][0] == opponent)
+					return -10;
+			}
+		}
 
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                if (board[row][col] == ' ') {
-                    board[row][col] = player;
-                    double score = miniMaxdecider(board, (player == 'X') ? 'O' : 'X');
-                    board[row][col] = ' ';
+		// Checking for Columns for X or O victory.
+		for (int col = 0; col < 3; col++)
+		{
+			if (b[0][col] == b[1][col] &&
+				b[1][col] == b[2][col])
+			{
+				if (b[0][col] == player)
+					return +10;
 
-                    if ((player == 'X' && score > bestScore) || (player == 'O' && score < bestScore)) {
-                        bestScore = score;
-                        bestMove[0] = row;
-                        bestMove[1] = col;
-                    }
-                }
-            }
-        }
-        return bestMove;
-    }
-    public static double miniMaxdecider(char[][] board, char player) {
-        if (isGameOver(board, 'X')) {
-            return evalScore(board, 'X');
-        } else if (isGameOver(board, 'O')) {
-            return evalScore(board, 'O');
-        }
-        double bestScore = (player == 'X') ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                if (board[row][col] == ' ') {
-                    board[row][col] = player;
-                    double score = miniMaxdecider(board, (player == 'X') ? 'O' : 'X');
-                    board[row][col] = ' ';
+				else if (b[0][col] == opponent)
+					return -10;
+			}
+		}
 
-                    if ((player == 'X' && score > bestScore) || (player == 'O' && score < bestScore)) {
-                        bestScore = score;
-                    }
-                }
-            }
-        }
-        double euclideanDistanceScore = evaluateDistScore(board, player);
-        return bestScore + euclideanDistanceScore;
-    }
-    public static double evalScore(char[][] board, char player) {
-        if (hasPlayerWon(board, player)) {
-            return 1.0;
-        } else if (hasPlayerWon(board, (player == 'X' ? 'O' : 'X'))) {
-            return -1.0;
-        } else {
-            return 0.0;
-        }
-    }
-    public static double evaluateDistScore(char[][] board, char player) {
-        double totalDistance = 0.0;
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
-                if (board[row][col] == ' ') {
-                    totalDistance += euclideanDistance(row, col, 1, 1);
-                }
-            }
-        }
-        return 1.0 / (totalDistance + 1);
-    }
-    public static double euclideanDistance(int row1, int col1, int row2, int col2) {
-        return Math.sqrt(Math.pow(row2 - row1, 2) + Math.pow(col2 - col1, 2));
-    }
+		// Checking for Diagonals for X or O victory.
+		if (b[0][0] == b[1][1] && b[1][1] == b[2][2])
+		{
+			if (b[0][0] == player)
+				return +10;
+			else if (b[0][0] == opponent)
+				return -10;
+		}
+
+		if (b[0][2] == b[1][1] && b[1][1] == b[2][0])
+		{
+			if (b[0][2] == player)
+				return +10;
+			else if (b[0][2] == opponent)
+				return -10;
+		}
+
+		// Else if none of them have won then return 0
+		return 0;
+	}
+
+	// This is the minimax function. It considers all
+	// the possible ways the game can go and returns
+	// the value of the board
+	static int minimax(char board[][],
+						int depth, Boolean isMax)
+	{
+		int score = evaluate(board);
+
+		// If Maximizer has won the game
+		// return his/her evaluated score
+		if (score == 10)
+			return score;
+
+		// If Minimizer has won the game
+		// return his/her evaluated score
+		if (score == -10)
+			return score;
+
+		// If there are no more moves and
+		// no winner then it is a tie
+		if (isMovesLeft(board) == false)
+			return 0;
+
+		// If this maximizer's move
+		if (isMax)
+		{
+			int best = -1000;
+
+			// Traverse all cells
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					// Check if cell is empty
+					if (board[i][j]=='_')
+					{
+						// Make the move
+						board[i][j] = player;
+
+						// Call minimax recursively and choose
+						// the maximum value
+						best = Math.max(best, minimax(board,
+										depth + 1, !isMax));
+
+						// Undo the move
+						board[i][j] = '_';
+					}
+				}
+			}
+			return best;
+		}
+
+		// If this minimizer's move
+		else
+		{
+			int best = 1000;
+
+			// Traverse all cells
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					// Check if cell is empty
+					if (board[i][j] == '_')
+					{
+						// Make the move
+						board[i][j] = opponent;
+
+						// Call minimax recursively and choose
+						// the minimum value
+						best = Math.min(best, minimax(board,
+										depth + 1, !isMax));
+						board[i][j] = '_';
+					}
+				}
+			}
+			return best;
+		}
+	}
+
+	static Move findBestMove(char board[][]){
+		int bestVal = -1000;
+		Move bestMove = new Move();
+		bestMove.row = -1;
+		bestMove.col = -1;
+		for (int i = 0; i < 3; i++)	{
+			for (int j = 0; j < 3; j++){
+				if (board[i][j] == '_'){
+					board[i][j] = player;
+					int moveVal = minimax(board, 0, false);
+					board[i][j] = '_';
+					if (moveVal > bestVal)
+					{
+						bestMove.row = i;
+						bestMove.col = j;
+						bestVal = moveVal;
+					}
+				}
+			}
+		}
+		System.out.printf("The value of the best Move " +
+								"is : %d\n\n", bestVal);
+		return bestMove;
+	}
+
+	public static void main(String[] args)
+	{
+		char board[][] = {{ 'x', 'o', 'x' },
+						{ 'o', 'o', 'x' },
+						{ '_', '_', '_' }};
+
+		Move bestMove = findBestMove(board);
+		System.out.printf("The Optimal Move is :\n");
+		System.out.printf("ROW: %d COL: %d\n\n",
+				bestMove.row, bestMove.col );
+	}
+
 }

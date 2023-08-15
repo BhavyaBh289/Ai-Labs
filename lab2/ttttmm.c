@@ -1,6 +1,13 @@
- 
+ //player X 1
+ //computer O -1
 #include<stdio.h>
 #include <stdbool.h>
+
+#define SIZE 3
+#define PLAYER_X 1
+#define PLAYER_O -1
+#define EMPTY 0
+
 int board[3][3]= {{0,0,0},{0,0,0},{0,0,0}};
 void initial(){
     printf("player is X \nWhen asked to play they have to enter a location according to the given pattern\n1|2|3\n-+-+-\n4|5|6\n-+-+-\n7|8|9\n");
@@ -48,6 +55,8 @@ int printgame(int n){
         printf("player wins  the game \n");
     else if(n==-1){
         printf("computer wins the game\n");
+    }else if(n==2){
+        printf("Game Tied\n");
     }
     return n;
 }
@@ -77,144 +86,74 @@ int checkgame(){
     }
     return 2 ;
 }
-int max(int num1, int num2){
-    return (num1 > num2 ) ? num1 : num2;
-}
 
-int min(int num1, int num2){
-    return (num1 > num2 ) ? num2 : num1;
-}
-bool isMovesLeft(){
-    for (int i = 0; i<3; i++)
-        for (int j = 0; j<3; j++)
-            if (board[i][j]=='_')
-                return true;
-    return false;
-}
-int evaluate(){
-    for (int row = 0; row<3; row++){
-        if (board[row][0]==board[row][1] &&
-            board[row][1]==board[row][2])
-        {
-            if (board[row][0]==1)
-                return +10;
-            else if (board[row][0]==-1)
-                return -10;
-        }
-    }
 
-    // Checking for Columns for X or O victory.
-    for (int col = 0; col<3; col++){
-        if (board[0][col]==board[1][col] && board[1][col]==board[2][col]){
-            if (board[0][col]==1)
-                return +10;
+// Minimax function
+int minimax(int depth, int isMaximizing) {
+    int score = checkgame();
 
-            else if (board[0][col]==-1)
-                return -10;
-        }
-    }
-
-    // Checking for Diagonals for X or O victory.
-    if (board[0][0]==board[1][1] && board[1][1]==board[2][2]){
-        if (board[0][0]==1)
-            return +10;
-        else if (board[0][0]==-1)
-            return -10;
-    }
-
-    if (board[0][2]==board[1][1] && board[1][1]==board[2][0])
-    {
-        if (board[0][2]==1)
-            return +10;
-        else if (board[0][2]==-1)
-            return -10;
-    }
-
-    // Else if none of them have won then return 0
-    return 0;
-}
-int minimax(int depth, bool isMax){
-    int score = evaluate(board);
-    if (score == 10)
+    // If the AI wins, return the score
+    if (score == 1) {
         return score;
+    }
 
-    // If Minimizer has won the game return his/her
-    // evaluated score
-    if (score == -10)
+    // If the human wins, return the score
+    if (score == -1) {
         return score;
+    }
 
-    // If there are no more moves and no winner then
-    // it is a tie
-    if (isMovesLeft(board)==false)
+    // If the board is full, it's a tie
+    if (score==2) {
         return 0;
-
-    // If this maximizer's move
-    if (isMax)
-    {
-        int best = -1000;
-
-        // Traverse all cells
-        for (int i = 0; i<3; i++)
-        {
-            for (int j = 0; j<3; j++)
-            {
-                // Check if cell is empty
-                if (board[i][j]==0)
-                {
-                    // Make the move
-                    board[i][j] = 1;
-
-                    // Call minimax recursively and choose
-                    // the maximum value
-                    best = max( best, minimax( depth+1, !isMax));
-                    // Undo the move
-                    board[i][j] = 0;
-                }
-            }
-        }
-        return best;
     }
 
-    // If this minimizer's move
-    else
-    {
-        int best = 1000;
-
-        // Traverse all cells
-        for (int i = 0; i<3; i++)
-        {
-            for (int j = 0; j<3; j++)
-            {
-                // Check if cell is empty
-                if (board[i][j]==0)
-                {
-                    // Make the move
-                    board[i][j] = -1;
-
-                    // Call minimax recursively and choose
-                    // the minimum value
-                    best = min(best, minimax( depth+1, !isMax));
-
-                    // Undo the move
-                    board[i][j] = 0;
+    // If it's the AI's turn
+    if (isMaximizing) {
+        int bestScore = -1000;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j] == EMPTY) {
+                    board[i][j] = PLAYER_O;
+                    int score = minimax(depth + 1, 0);
+                    board[i][j] = EMPTY;
+                    if (score > bestScore) {
+                        bestScore = score;
+                    }
                 }
             }
         }
-        return best;
+        return bestScore;
+    } else {
+        // If it's the human's turn
+        int bestScore = 1000;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j] == EMPTY) {
+                    board[i][j] = PLAYER_X;
+                    int score = minimax(depth + 1, 1);
+                    board[i][j] = EMPTY;
+                    if (score < bestScore) {
+                        bestScore = score;
+                    }
+                }
+            }
+        }
+        return bestScore;
     }
 }
+
+// Function to find the best move for the AI player (O)
 void computerMove() {
     int bestScore = -1000;
     int bestMoveX = -1;
     int bestMoveY = -1;
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (board[i][j] == 0) {
-                board[i][j] = -1;
-                int score = minimax(0, false);
-                printf("%d",score);
-                board[i][j] = 0;
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (board[i][j] == EMPTY) {
+                board[i][j] = PLAYER_O;
+                int score = minimax(0, 0);
+                board[i][j] = EMPTY;
                 if (score > bestScore) {
                     bestScore = score;
                     bestMoveX = i;
@@ -223,8 +162,11 @@ void computerMove() {
             }
         }
     }
-    board[bestMoveX][bestMoveY] = -1;
+
+    board[bestMoveX][bestMoveY] = PLAYER_O;
 }
+
+
 int main(){
     initial();
     int chance = 0;
@@ -247,3 +189,8 @@ int main(){
     printf("\nHope You liked the game");
     return 0;
 }
+
+
+
+
+

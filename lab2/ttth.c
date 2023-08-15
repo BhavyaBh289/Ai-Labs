@@ -49,6 +49,8 @@ int printgame(int n){
         printf("player wins  the game \n");
     else if(n==-1){
         printf("computer wins the game\n");
+    }else if(n==2){
+        printf("Game Tied\n");
     }
     return n;
 }
