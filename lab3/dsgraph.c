@@ -136,39 +136,39 @@ void bfs(struct Graph* graph){
   struct Queue * queue = createQueue();
   int visited[graph->vertNum] ;
   enqueue(queue,0);
-  visited[0]=1;
   while(queue->front){
     int n = dequeue(queue);
-    printf("%d ",n);
-    struct node * visiting = graph->adjLists[n];
-    while (visiting){
-      int adj =visiting->data;
-      if(visited[adj]!=1){
-        enqueue(queue,adj);
-        visited[adj]=1;
+    if (visited[n]!=1){
+      printf("%d ",n);
+      visited[n]=1;
+      struct node * visiting = graph->adjLists[n];
+      while (visiting){
+        int adj =visiting->data;
+        if(visited[adj]!=1){
+          enqueue(queue,adj);
+        }
+        visiting = visiting -> next;
       }
-      visiting = visiting -> next;
     }
   }
 }
 void dfs(struct Graph* graph){
   struct stack * stk = createstack();
   int visited[graph->vertNum] ;
-
   push(stk,0);
-  visited[0]=1;
-
   while(stk->head){
     int n = pop(stk);
-    printf("%d ",n);
-    struct node * visiting = graph->adjLists[n];
-    while (visiting){
-      int adj =visiting->data;
-      if(visited[adj]!=1){
-        push(stk,adj);
-        visited[adj]=1;
+    if(visited[n]!=1){
+      printf("%d ",n);
+      visited[n]=1;
+      struct node * visiting = graph->adjLists[n];
+      while (visiting){
+        int adj =visiting->data;
+        if(visited[adj]!=1){
+          push(stk,adj);
+        }
+        visiting = visiting -> next;
       }
-      visiting = visiting -> next;
     }
   }
 }
