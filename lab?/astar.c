@@ -58,7 +58,7 @@ void insert (struct Graph* graph,struct anode * ele){
     new->element= ele;
     struct llnode * t = head;
     if(!t){
-        head=t;
+        head=new;
     }else{
         while(((t->element->cost + graph->heurestic[t->element->data]) < (new->element->cost+ graph->heurestic[new->element->data]))&&(t->next!=NULL)){
             t=t->next;
@@ -89,9 +89,9 @@ void astar(struct Graph* graph,int g ){
     while(head->element->data!=g){
         popsmallest(graph);
     }
-    struct anode * final= head->element;
+    // struct anode * final= head->element;
 
-    struct anode *temp= final;
+    struct anode *temp= head->element;
     while(temp){
         printf("%d ",temp->data);
         temp = temp->prev;
