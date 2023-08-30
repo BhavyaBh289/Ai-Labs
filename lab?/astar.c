@@ -91,7 +91,7 @@ void astar(struct Graph* graph,int g ){
     }
     // struct anode * final= head->element;
 
-    struct anode *temp= head->element;
+    struct anode *temp = head->element;
     while(temp){
         printf("%d ",temp->data);
         temp = temp->prev;
@@ -111,7 +111,7 @@ void printGraph(struct Graph* graph) {
   }
 }
 struct Graph* creategraph(){
-    int t [5] = {1,1,2,1,2};
+   /* int t [5] = {1,1,2,1,2};
     struct Graph* graph = createAGraph(5,t);
     addEdge(graph,0,1,3);
     addEdge(graph,0,3,7);
@@ -120,6 +120,23 @@ struct Graph* creategraph(){
     addEdge(graph,1,2,1);
     addEdge(graph,2,3,2);
     addEdge(graph,3,4,3);
+   */
+    int t [10] ={10,8,5,7,3,6,5,3,1,0};
+    struct Graph* graph = createAGraph(10,t);
+    addEdge(graph,0,1,6);
+    addEdge(graph,0,5,3);
+    addEdge(graph,1,2,3);
+    addEdge(graph,1,3,2);
+    addEdge(graph,2,3,1);
+    addEdge(graph,2,4,5);
+    addEdge(graph,3,4,8);
+    addEdge(graph,4,8,5);
+    addEdge(graph,4,8,5);
+    addEdge(graph,5,6,1);
+    addEdge(graph,5,7,7);
+    addEdge(graph,6,8,3);
+    addEdge(graph,7,8,2);
+    addEdge(graph,8,9,3);
     return graph;
 }
 struct Graph* makegraph(){
@@ -141,22 +158,9 @@ struct Graph* makegraph(){
     }
 }
 
-
-
-
-
-
-
 int main() {
     struct Graph* graph = creategraph();
-    // printGraph(graph);
-    astar(graph,2);
-    // printf("Bfs is : ");
-    // bfs(graph);
-    // printf("\n");
-    // printf("Dfs is : ");
-    // dfs(graph);
-    // printf("\n");
+    astar(graph,9);
     return 0;
 }
 
