@@ -114,11 +114,14 @@ void findcsp(char* s1, char* s2, char* s3){
         used[i] = false;
     }
     permutate(uniqueChar, 0, assignlist, s1, s2, s3);
+    if(!sol){
+        printf("no sollutions");
+    }
 }
 int main(){
-    char s1[] = "base";
-    char s2[] = "ball";
-    char s3[] = "games";
+    char s1[] = "crack";
+    char s2[] = "hack";
+    char s3[] = "error";
     findcsp(s1, s2, s3);
     return 0;
 }
