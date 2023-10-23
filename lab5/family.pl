@@ -70,7 +70,7 @@ grandfather(X, Z) :- father(X, Y), parent(Y, Z).
 
 brother_in_law(X,Y) :- male(W),male(X),sibling(X,W),father(W,T),mother(Y,T).
 
-sister_in_law(X,Y) :- mother(X,W),cousin(W,T),mother(Y,T).
+sister_in_law(X,Y) :- female(X),sibling(X,Z),wife(Z,W),sibling(W,Y).
 
 grandmother(X, Z) :- mother(X, Y), parent(Y, Z).
 
@@ -141,7 +141,7 @@ find_relationship(X, Y) :-
     cousin(X, Y), write(X), write(' is the cousin of '), write(Y), nl.
 
 find_relationship(X, Y) :-
-    sister_in_law(X, Y), write(X), write(' is the deerani of '), write(Y), nl.
+    sister_in_law(X, Y), write(X), write(' is the sister in law of '), write(Y), nl.
 
 find_relationship(X, Y) :-
     brother_in_law(X, Y), write(X), write(' is the brother_in_law of '), write(Y), nl.
