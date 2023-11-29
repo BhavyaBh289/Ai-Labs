@@ -1,0 +1,191 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct Board{
+    int Board[9];
+};
+struct list{
+    struct Board * state;
+    char move;
+    struct list * prev;
+};
+struct priorityq{
+    struct list * top;
+    int heuristic;
+    struct priorityq * next;
+};
+struct priorityq * head = NULL;
+int mod(int n){
+    if(n>0){
+        return n;
+    }else{
+        return n*-1;
+    }
+}
+int findheurestic(struct Board *b){
+    int h = 0;
+    for(int i=0;i<9;i++){
+        int c=b->Board[i];
+        if(c==0){
+            h+=mod(i/3-1);h+=mod(i%3-1);
+        }
+        else {
+            if(c<=4){
+                c-=1;
+            }
+            h+=mod((i/3)-(c/3));h+=mod((i%3)-(c%3));
+        }
+    }
+    return h;
+}
+void insert ( struct list * new){
+    int heuristic =findheurestic(new->state);
+    // printf("%d",heuristic);
+    struct priorityq * add = malloc(sizeof(struct priorityq));
+    add->top=new;
+    add->heuristic=heuristic;
+    if(head==NULL){
+        head=add;
+        head->next=NULL;
+        return;
+    }
+    if(head->heuristic>heuristic){
+        add->next=head;
+        head=add;
+        return;
+    }else{
+        struct priorityq * temp = head;
+        while(temp->next!=NULL){
+            if(temp->next->heuristic>heuristic){
+                break;
+            }
+            temp=temp->next;
+        }
+        struct priorityq * tempp= temp->next;
+        temp->next=add;
+        add->next= tempp;
+    }
+    return;
+}
+struct list * dequeue(){
+    if(head!=NULL){
+        struct list * add = malloc(sizeof(struct list));
+        add = head->top;
+        head=head->next;
+        return add;
+    }
+    return NULL;
+}
+void expandmove(struct list * toplay){
+    int k,t;
+    for(int i=0;i<9;i++){
+        if(toplay->state->Board[i]==0){
+            k=i;
+        }
+    }
+    if(k%3!=2){         //play left
+        struct list * temp = malloc(sizeof(struct list));
+        temp->move='l';
+        temp->state = malloc(sizeof(struct Board));
+        for(int i=0;i<9;i++){
+            temp->state->Board[i]=toplay->state->Board[i];
+        }
+        temp->state->Board[k]= toplay->state->Board[k+1];
+        temp->state->Board[k+1]= toplay->state->Board[k];
+        temp->prev=toplay;
+        insert(temp);
+    }
+    if(k%3!=0){         //play right
+        struct list * temp = malloc(sizeof(struct list));
+        temp->move='r';
+        temp->state = malloc(sizeof(struct Board));
+        for(int i=0;i<9;i++){
+            temp->state->Board[i]=toplay->state->Board[i];
+        }
+        temp->state->Board[k]= toplay->state->Board[k-1];
+        temp->state->Board[k-1]= toplay->state->Board[k];
+        temp->prev=toplay;
+        insert(temp);
+    }
+    if(k/3!=2){         //play up
+        struct list * temp = malloc(sizeof(struct list));
+        temp->move='u';
+        temp->state = malloc(sizeof(struct Board));
+        for(int i=0;i<9;i++){
+            temp->state->Board[i]=toplay->state->Board[i];
+        }
+        temp->state->Board[k]= toplay->state->Board[k+3];
+        temp->state->Board[k+3]= toplay->state->Board[k];
+        temp->prev=toplay;
+        insert(temp);
+    }
+    if(k/3!=0){         //play down
+        struct list * temp = malloc(sizeof(struct list));
+        temp->move='d';
+        temp->state = malloc(sizeof(struct Board));
+        for(int i=0;i<9;i++){
+            temp->state->Board[i]=toplay->state->Board[i];
+        }
+        temp->state->Board[k]= toplay->state->Board[k-3];
+        temp->state->Board[k-3]= toplay->state->Board[k];
+        temp->prev=toplay;
+        insert(temp);
+    }
+}
+struct list * bestfirstsearch( struct Board * initial){
+    struct list * start = malloc(sizeof(struct list));
+    start->state= initial;
+    start->move='s';
+    start->prev=NULL;
+    expandmove(start);
+    while( head!= NULL){
+        // printf("%d ",head->heuristic);
+        if(head->heuristic==0){
+            return head->top;
+        }
+        expandmove(dequeue());
+    }
+    return NULL;
+}
+void printres(struct list *res){
+    if(res == NULL){
+        printf("no sollution");
+    }
+    if(res->move!='s'){
+        printres(res->prev);
+    }
+    printf("play %c\n\n",res->move);
+    for(int i=0;i<9;i++){
+        printf(" %d ",res->state->Board[i]);
+        if(i%3==2){
+            printf("\n");
+        }
+    }
+}
+struct Board * getboard(){
+    printf("enter board as follows 0 for empty position and add values  for the determined places \n1|2|3\n-----\n4|5|6\n-----\n7|8|9\n");
+    struct Board * b = malloc(sizeof(struct Board));
+    for(int i=0;i<9;i++){
+        printf(" %d , %d:",i%3+1,i/3+1);
+        scanf("%d",&b->Board[i]);
+    }
+    return b;
+}
+int main(){
+
+    struct Board * b = malloc(sizeof(struct Board));
+    b->Board[0]=1;
+    b->Board[1]=2;
+    b->Board[2]=3;
+    b->Board[3]=4;
+    b->Board[4]=5;
+    b->Board[5]=8;
+    b->Board[6]=6;
+    b->Board[7]=0;
+    b->Board[8]=7;
+    // printf("%d ",findheurestic(b));
+    // b=getboard();
+    struct list* l = bestfirstsearch(b);
+    printf("\nThe result and steps are as follows\n");
+    printres(l);
+    return 0;
+}
